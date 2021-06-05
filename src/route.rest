@@ -2,7 +2,7 @@ GET http://localhost:3000/tasks
 
 ###
 
-GET http://localhost:3000/tasks/2
+GET http://localhost:3000/tasks/60bb11ee1e0c779b2c0c9181
 
 ###
 
@@ -11,4 +11,16 @@ Content-Type: application/json
 
 {
     "name": "Feed Toad"
+}
+
+###
+
+DELETE http://localhost:3000/tasks/60bb11ee1e0c779b2c0c9181
+
+###
+PATCH http://localhost:3000/tasks/60bb126b83302d9b638db848
+Content-Type: application/json
+
+{
+    "name": "Feed cats"
 }

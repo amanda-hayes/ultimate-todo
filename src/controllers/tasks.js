@@ -13,8 +13,8 @@ tasks.get("/", async (req, res) => {
 });
 
 // GET one
-tasks.get("/:id", (req, res) => {
-  res.send(req.params.id);
+tasks.get("/:id", getTask, (req, res) => {
+  res.json(res.task);
 });
 
 // CREATE one
@@ -32,8 +32,44 @@ tasks.post("/", async (req, res) => {
   }
 });
 
-tasks.patch("/:id", (req, res) => {});
+// EDIT one
+tasks.patch("/:id", getTask, async (req, res) => {
+  if (req.body.name != null) {
+    res.task.name = req.body.name;
+  }
+  if (req.body.completed != null) {
+    res.task.completed = req.body.completed;
+  }
+  try {
+    const updatedTask = await res.task.save();
+    res.json(updatedTask);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
 
-tasks.delete("/:id", (req, res) => {});
+// DELETE one
+tasks.delete("/:id", getTask, async (req, res) => {
+  try {
+    await res.task.remove();
+    res.json({ message: "Deleted Task" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+async function getTask(req, res, next) {
+  let task;
+  try {
+    task = await Task.findById(req.params.id);
+    if (task == null) {
+      return res.status(404).json({ message: "Cannot find task" });
+    }
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
+  res.task = task;
+  next();
+}
 
 module.exports = tasks;
